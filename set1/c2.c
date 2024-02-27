@@ -14,7 +14,7 @@ char* xorHexTogether(char* str1, char* str2, size_t len) {
   return out;
 }
 
-int main(int argc, char const* argv[]) {
+int main(int argc, char* argv[]) {
   char* hex_str = argv[1];
   size_t hex_str_len = strlen(hex_str);
   char* xor_str = argv[2];
