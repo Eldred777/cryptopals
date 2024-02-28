@@ -10,6 +10,7 @@
 // ----- DECODERS
 // -------------------------
 
+// Convert a heximal into a decimal
 int decodeHexChar(char hex) {
   if ('0' <= hex && hex <= '9') {
     return hex - '0';
@@ -20,6 +21,7 @@ int decodeHexChar(char hex) {
   }
 }
 
+// Convert a string of length `hex_str_len` into the corresponding decimal
 int decodeHexStr(char* hex_str, size_t hex_str_len) {
   int acc = 0;
   int mantissa = 1;  // keep track of power of 16
@@ -29,6 +31,14 @@ int decodeHexStr(char* hex_str, size_t hex_str_len) {
     acc += decodeHexChar(hex_str[i]) * mantissa;
     mantissa *= 16;
   }
+  return acc;
+}
+
+// Converts 2 contiguously stored hexits into a char (8 bits)
+char decodeHexByte(char* hex_str) {
+  int acc = 0;
+  acc += decodeHexChar(hex_str[0]) << 4;
+  acc += decodeHexChar(hex_str[1]);
   return acc;
 }
 
@@ -58,11 +68,14 @@ char encodeSingleB64(int dec) {
     return dec + 'a' - ALPHABET_LENGTH;
   } else if (dec < 2 * ALPHABET_LENGTH + NUM_DIGITS) {
     return dec + '0' - 2 * ALPHABET_LENGTH;
+  } else if (dec == 62) {
+    return '.';
+  } else if (dec == 63) {
+    return '/';
   } else {
     printf("error in `encodeSingleB64` %d", dec);
     exit(1);
   }
-  // TODO maybe need more characters?
 }
 
 // -------------------------
@@ -98,9 +111,9 @@ char* encodeHex(int dec) {
 // -------------------------
 
 // for set 1 challenge 1
+// 3 hex chars = 2 b64 chars
 char* convertHexToB64(char* hex_str, size_t hex_str_len) {
   assert(!(hex_str_len % 3));  // Precondition: `hex_str_len` divisible by 3.
-  // 3 hex chars = 2 b64 chars
   int b64_str_len = hex_str_len * 2 / 3;
   char* b64_str = malloc(b64_str_len * sizeof(char) + 1);
   assert(b64_str);
